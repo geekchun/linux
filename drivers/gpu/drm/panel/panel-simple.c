@@ -4090,6 +4090,28 @@ static const struct panel_desc arm_rtsm = {
 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
 };
 
+static const struct drm_display_mode ployer_s070wv20_ct16_mode = {
+	.clock = 40000,
+	.hdisplay = 800,
+	.hsync_start = 800 + 112,      // hdisplay + right margin (ri)
+	.hsync_end = 800 + 112 + 76,   // hsync_start + hsync len (hs)
+	.htotal = 800 + 112 + 76 + 12, // hsync_end + left margin (le)
+	.vdisplay = 600,
+	.vsync_start = 600 + 3,        // vdisplay + lower margin (lo)
+	.vsync_end = 600 + 3 + 4,      // vsync_start + vsync len (vs)
+	.vtotal = 600 + 3 + 4 + 34,    // vsync_end + upper margin (up)
+};
+
+static const struct panel_desc ployer_s070wv20_ct16 = {
+	.modes = &ployer_s070wv20_ct16_mode,
+	.num_modes = 1,
+	.bpc = 6,
+	.size = {
+		.width = 154,
+		.height = 86,
+	},
+};
+
 static const struct of_device_id platform_of_match[] = {
 	{
 		.compatible = "ampire,am-1280800n3tzqw-t00h",
@@ -4163,6 +4185,9 @@ static const struct of_device_id platform_of_match[] = {
 	}, {
 		.compatible = "bananapi,s070wv20-ct16",
 		.data = &bananapi_s070wv20_ct16,
+	}, {
+		.compatible = "ployer,s070wv20-ct16",
+		.data = &ployer_s070wv20_ct16,
 	}, {
 		.compatible = "boe,hv070wsa-100",
 		.data = &boe_hv070wsa
