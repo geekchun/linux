@@ -71,7 +71,7 @@
 	};
 
 	panel: panel {
-		compatible = "ployer,s070wv20-ct16";
+		compatible = "ployer,7610028287";
 		power-supply = <&reg_vcc3v3>;
 		enable-gpios = <&axp_gpio 0 GPIO_ACTIVE_HIGH>; /* AXP GPIO0 */
 		backlight = <&backlight>;

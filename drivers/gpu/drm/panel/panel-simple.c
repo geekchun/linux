@@ -4090,7 +4090,7 @@ static const struct panel_desc arm_rtsm = {
 	.bus_format = MEDIA_BUS_FMT_RGB888_1X24,
 };
 
-static const struct drm_display_mode ployer_s070wv20_ct16_mode = {
+static const struct drm_display_mode ployer_7610028287_mode = {
 	.clock = 40000,
 	.hdisplay = 800,
 	.hsync_start = 800 + 112,      // hdisplay + right margin (ri)
@@ -4102,8 +4102,8 @@ static const struct drm_display_mode ployer_s070wv20_ct16_mode = {
 	.vtotal = 600 + 3 + 4 + 34,    // vsync_end + upper margin (up)
 };
 
-static const struct panel_desc ployer_s070wv20_ct16 = {
-	.modes = &ployer_s070wv20_ct16_mode,
+static const struct panel_desc ployer_7610028287 = {
+	.modes = &ployer_7610028287_mode,
 	.num_modes = 1,
 	.bpc = 6,
 	.size = {
@@ -4186,8 +4186,8 @@ static const struct of_device_id platform_of_match[] = {
 		.compatible = "bananapi,s070wv20-ct16",
 		.data = &bananapi_s070wv20_ct16,
 	}, {
-		.compatible = "ployer,s070wv20-ct16",
-		.data = &ployer_s070wv20_ct16,
+		.compatible = "ployer,7610028287",
+		.data = &ployer_7610028287,
 	}, {
 		.compatible = "boe,hv070wsa-100",
 		.data = &boe_hv070wsa
