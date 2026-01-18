@@ -82,6 +82,15 @@
 			};
 		};
 	};
+
+	reserved-memory {
+		default-pool {
+			compatible = "shared-dma-pool";
+			size = <0x6000000>;
+			alloc-ranges = <0x45000000 0x10000000>;
+		};
+	};
+
 };
 
 &pwm {
