@@ -2799,6 +2799,31 @@ static const struct panel_desc lg_lp129qe = {
 	},
 };
 
+static const struct drm_display_mode lg_lp097x02_mode = {
+	.clock = 100000,
+	.hdisplay = 1024,
+	.hsync_start = 1024 + 480,
+	.hsync_end = 1024 + 480 +260,
+	.htotal = 1024 + 480 +260 + 320,
+	.vdisplay = 768,
+	.vsync_start = 768 + 16,
+	.vsync_end = 768 + 16 + 6,
+	.vtotal = 768 + 16 + 6 + 10,
+};
+
+static const struct panel_desc lg_lp097x02 = {
+	.modes = &lg_lp097x02_mode,
+	.num_modes = 1,
+	.bpc = 8,
+	.size = {
+		.width = 272,
+		.height = 181,
+	},
+	.bus_format = MEDIA_BUS_FMT_RGB666_1X7X3_SPWG,
+	.bus_flags = DRM_BUS_FLAG_DE_HIGH,
+	.connector_type = DRM_MODE_CONNECTOR_LVDS,
+};
+
 static const struct display_timing logictechno_lt161010_2nh_timing = {
 	.pixelclock = { 26400000, 33300000, 46800000 },
 	.hactive = { 800, 800, 800 },
@@ -4334,6 +4359,9 @@ static const struct of_device_id platform_of_match[] = {
 	}, {
 		.compatible = "lg,lp129qe",
 		.data = &lg_lp129qe,
+	},{
+		.compatible = "lg,lp097x02",
+		.data = &lg_lp097x02,
 	}, {
 		.compatible = "logicpd,type28",
 		.data = &logicpd_type_28,
