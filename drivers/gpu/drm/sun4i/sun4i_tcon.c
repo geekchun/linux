@@ -1453,6 +1453,8 @@ static const struct sun4i_tcon_quirks sun4i_a10_quirks = {
 	.has_channel_1		= true,
 	.dclk_min_div		= 4,
 	.set_mux		= sun4i_a10_tcon_set_mux,
+	.supports_lvds		= true,
+	.setup_lvds_phy		= sun4i_tcon_setup_lvds_phy,
 };
 
 static const struct sun4i_tcon_quirks sun5i_a13_quirks = {
