@@ -37,7 +37,7 @@
 #define SILEAD_REG_ID		0xFC
 #define SILEAD_REG_MEM_CHECK	0xB0
 
-#define SILEAD_STATUS_OK	0x5A5A5A5A
+#define SILEAD_STATUS_OK	0x5A605A5F
 #define SILEAD_TS_DATA_LEN	44
 #define SILEAD_CLOCK		0x04
 
@@ -291,6 +291,10 @@ static void silead_ts_read_data(struct i2c_client *client)
 		touchscreen_set_mt_pos(&data->pos[touch_nr], &data->prop,
 			get_unaligned_le16(&bufp[SILEAD_POINT_X_OFF]) & 0xfff,
 			get_unaligned_le16(&bufp[SILEAD_POINT_Y_OFF]) & 0xfff);
+
+		/* 触摸屏实际坐标954*630左右，这里作简单缩放 */
+		data->pos[touch_nr].x = (data->pos[touch_nr].x*1024)/954;
+		data->pos[touch_nr].y = (data->pos[touch_nr].y*600)/630;
 		touch_nr++;
 	}
 
