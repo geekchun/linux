@@ -48,17 +48,25 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
-
+#include <dt-bindings/pwm/pwm.h>
 / {
 	model = "fspad-733";
 	compatible = "fspad,733", "allwinner,sun8i-a33";
 
 	aliases {
-		serial0 = &uart0;
+		ethernet0 = &rtl8723cs;
 	};
 
 	chosen {
-		stdout-path = "serial0:115200n8";
+		
+	};
+
+	backlight: backlight {
+		compatible = "pwm-backlight";
+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
+		brightness-levels = <0 10 20 30 40 50 60 70 80 90 100>;
+		default-brightness-level = <5>;
+		enable-gpios = <&pio 7 6 GPIO_ACTIVE_HIGH>;
 	};
 
 	panel {
@@ -71,7 +79,16 @@
 			};
 		};
 	};
+
+	wifi_pwrseq: pwrseq {
+		compatible = "mmc-pwrseq-simple";
+		reset-gpios = <&r_pio 0 6 GPIO_ACTIVE_LOW>; /* PL6 */
+		clocks = <&rtc CLK_OSC32K_FANOUT>;
+		clock-names = "ext_clock";
+	};
 };
+
+
 
 &codec {
 	status = "okay";
@@ -140,9 +157,42 @@
 	status = "okay";
 };
 
+&mmc1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc1_pg_pins>;
+	vmmc-supply = <&reg_aldo1>;
+	vqmmc-supply = <&reg_dldo1>,<&reg_dldo2>;
+	mmc-pwrseq = <&wifi_pwrseq>;
+	bus-width = <4>;
+	non-removable;
+	status = "okay";
 
+	rtl8723cs: wifi@1 {
+		reg = <1>;
+	};
+};
+
+&uart1{
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pg_pins>, <&uart1_cts_rts_pg_pins>;
+	uart-has-rtscts;
+	status = "okay";
+
+	bluetooth {
+		compatible = "realtek,rtl8723cs-bt";
+		device-wake-gpios = <&r_pio 0 10 GPIO_ACTIVE_LOW>; /* PL10 */
+		enable-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
+		host-wake-gpios = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
+	};
+};
 
 &ohci0 {
+	status = "okay";
+};
+
+&pwm {
+	pinctrl-names = "default";
+	pinctrl-0 = <&pwm0_pin>;
 	status = "okay";
 };
 
@@ -252,6 +302,41 @@
 	status = "okay";
 };
 
+&reg_dldo1 {
+	regulator-min-microvolt = <3300000>;
+	regulator-max-microvolt = <3300000>;
+	regulator-name = "vcc-wifi";
+	status = "okay";
+};
+
+&reg_dldo2 {
+	regulator-min-microvolt = <3300000>;
+	regulator-max-microvolt = <3300000>;
+	regulator-name = "vcc-wifi";
+	status = "okay";
+};
+
+&reg_dldo3 {
+	regulator-min-microvolt = <2800000>;
+	regulator-max-microvolt = <2800000>;
+	regulator-name = "vcc-csi";
+	status = "okay";
+};
+
+&reg_eldo1 {
+	regulator-min-microvolt = <1800000>;
+	regulator-max-microvolt = <1800000>;
+	regulator-name = "vcc-mipi";
+	status = "okay";
+};
+
+&reg_eldo2 {
+	regulator-min-microvolt = <1800000>;
+	regulator-max-microvolt = <1800000>;
+	regulator-name = "vcc-csi-1v8";
+	status = "okay";
+};
+
 &sound {
 	status = "okay";
 };
@@ -314,5 +399,8 @@
 
 &i2c1{
 	status = "okay";
-	
+	bma250@18 {
+		compatible = "bosch,bma250";
+		reg = <0x18>;
+	};
 };
