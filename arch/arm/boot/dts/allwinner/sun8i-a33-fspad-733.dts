@@ -54,11 +54,13 @@
 	compatible = "fspad,733", "allwinner,sun8i-a33";
 
 	aliases {
-		ethernet0 = &rtl8723cs;
+		serial0 = &uart0;
+		mmc0 = &mmc0;
+        mmc1 = &mmc1;
 	};
 
 	chosen {
-		
+		stdout-path = "serial0:115200n8";
 	};
 
 	backlight: backlight {
@@ -83,8 +85,22 @@
 	wifi_pwrseq: pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&r_pio 0 6 GPIO_ACTIVE_LOW>; /* PL6 */
-		clocks = <&rtc CLK_OSC32K_FANOUT>;
-		clock-names = "ext_clock";
+		post-power-on-delay-ms = <200>;
+	};
+
+	reserved-memory {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
+		default-pool {
+			compatible = "shared-dma-pool";
+			size = <0x8000000>;
+			alloc-ranges = <0x40000000 0x10000000>;
+			reusable;
+			linux,cma-default;
+		};
 	};
 };
 
@@ -150,26 +166,13 @@
 	};
 };
 
+
+
 &mmc0 {
 	vmmc-supply = <&reg_dcdc1>;
 	bus-width = <4>;
 	cd-gpios = <&pio 1 4 GPIO_ACTIVE_LOW>; /* PB4 */
 	status = "okay";
-};
-
-&mmc1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&mmc1_pg_pins>;
-	vmmc-supply = <&reg_aldo1>;
-	vqmmc-supply = <&reg_dldo1>,<&reg_dldo2>;
-	mmc-pwrseq = <&wifi_pwrseq>;
-	bus-width = <4>;
-	non-removable;
-	status = "okay";
-
-	rtl8723cs: wifi@1 {
-		reg = <1>;
-	};
 };
 
 &uart1{
@@ -185,6 +188,9 @@
 		host-wake-gpios = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
 	};
 };
+
+
+
 
 &ohci0 {
 	status = "okay";
@@ -228,15 +234,15 @@
 
 &reg_aldo2 {
 	regulator-always-on;
-	regulator-min-microvolt = <2350000>;
-	regulator-max-microvolt = <2650000>;
+	regulator-min-microvolt = <2500000>;
+	regulator-max-microvolt = <2500000>;
 	regulator-name = "vdd-dll";
 };
 
 &reg_aldo3 {
 	regulator-always-on;
-	regulator-min-microvolt = <2700000>;
-	regulator-max-microvolt = <3300000>;
+	regulator-min-microvolt = <3000000>;
+	regulator-max-microvolt = <3000000>;
 	regulator-name = "vcc-pll-avcc";
 };
 
@@ -303,6 +309,7 @@
 };
 
 &reg_dldo1 {
+	regulator-always-on;
 	regulator-min-microvolt = <3300000>;
 	regulator-max-microvolt = <3300000>;
 	regulator-name = "vcc-wifi";
@@ -310,6 +317,7 @@
 };
 
 &reg_dldo2 {
+	regulator-always-on;
 	regulator-min-microvolt = <3300000>;
 	regulator-max-microvolt = <3300000>;
 	regulator-name = "vcc-wifi";
@@ -402,5 +410,24 @@
 	bma250@18 {
 		compatible = "bosch,bma250";
 		reg = <0x18>;
+	};
+};
+
+&mmc1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc1_pg_pins>;
+	vmmc-supply = <&reg_dldo1>, <&reg_dldo2>;
+	vqmmc-supply = <&reg_aldo1>;
+	mmc-pwrseq = <&wifi_pwrseq>;
+	bus-width = <4>;
+	non-removable;
+	cap-sd-highspeed;
+	status = "okay";
+
+	rtl8723cs: wifi@1 {
+		compatible = "realtek,rtl8723cs";
+		reg = <1>;
+		interrupt-parent = <&r_pio>;
+		interrupts = <0 7 IRQ_TYPE_LEVEL_LOW>; /* PL7 */
 	};
 };
