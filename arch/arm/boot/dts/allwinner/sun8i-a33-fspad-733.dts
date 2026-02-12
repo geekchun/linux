@@ -85,7 +85,6 @@
 	wifi_pwrseq: pwrseq {
 		compatible = "mmc-pwrseq-simple";
 		reset-gpios = <&r_pio 0 6 GPIO_ACTIVE_LOW>; /* PL6 */
-		post-power-on-delay-ms = <200>;
 	};
 
 	reserved-memory {
@@ -103,8 +102,6 @@
 		};
 	};
 };
-
-
 
 &codec {
 	status = "okay";
@@ -166,12 +163,11 @@
 	};
 };
 
-
-
 &mmc0 {
 	vmmc-supply = <&reg_dcdc1>;
 	bus-width = <4>;
-	cd-gpios = <&pio 1 4 GPIO_ACTIVE_LOW>; /* PB4 */
+	broken-cd;
+	/*cd-gpios = <&pio 1 4 GPIO_ACTIVE_LOW>;*/ /* PB4 */
 	status = "okay";
 };
 
@@ -189,8 +185,23 @@
 	};
 };
 
+&mmc1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&mmc1_pg_pins>;
+	vmmc-supply = <&reg_dldo1>, <&reg_dldo2>;
+	vqmmc-supply = <&reg_aldo1>;
+	mmc-pwrseq = <&wifi_pwrseq>;
+	bus-width = <4>;
+	non-removable;
+	status = "okay";
 
-
+	rtl8723cs: wifi@1 {
+		compatible = "realtek,rtl8723cs";
+		reg = <1>;
+		interrupt-parent = <&r_pio>;
+		interrupts = <0 7 IRQ_TYPE_LEVEL_LOW>; /* PL7 */
+	};
+};
 
 &ohci0 {
 	status = "okay";
@@ -413,21 +424,3 @@
 	};
 };
 
-&mmc1 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&mmc1_pg_pins>;
-	vmmc-supply = <&reg_dldo1>, <&reg_dldo2>;
-	vqmmc-supply = <&reg_aldo1>;
-	mmc-pwrseq = <&wifi_pwrseq>;
-	bus-width = <4>;
-	non-removable;
-	cap-sd-highspeed;
-	status = "okay";
-
-	rtl8723cs: wifi@1 {
-		compatible = "realtek,rtl8723cs";
-		reg = <1>;
-		interrupt-parent = <&r_pio>;
-		interrupts = <0 7 IRQ_TYPE_LEVEL_LOW>; /* PL7 */
-	};
-};
